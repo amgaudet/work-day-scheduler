@@ -1,7 +1,7 @@
 var containerEl = document.querySelector('.container');
 var currentDay = moment().format('dddd MMM Do');
 var toDo = JSON.parse(localStorage.getItem("toDo")) || [];
-var currentHour = moment().format('h');
+var currentHour = parseInt(moment().format('H'));
 $('#currentDay').text(currentDay);
 
 var schedule = {
@@ -12,11 +12,10 @@ var schedule = {
 function setHours() {
     for (var i = 0; i < schedule.time.length; i++) {
         var block = document.createElement('form');
-        block.setAttribute("class", "time-block");
-        block.setAttribute("class", "row");
+        block.setAttribute("class", "time-block row");
 
         var hourEl = document.createElement('div');
-        hourEl.setAttribute("class", "hour");
+        hourEl.setAttribute("class", "col-2 hour");
         if (i <= 3){
             hourEl.textContent = (i + 8) + " AM";
         } else if (i === 4) {
@@ -26,7 +25,6 @@ function setHours() {
         }
 
         var textAreaEl = document.createElement('textarea');
-        textAreaEl.setAttribute("class", "description");
         textAreaEl.setAttribute("data-index", i);
         textAreaEl.setAttribute("data-hour", schedule.time[i]);
 
@@ -37,7 +35,7 @@ function setHours() {
         }
 
         var buttonEl = document.createElement('button');
-        buttonEl.setAttribute("class", "saveBtn");
+        buttonEl.setAttribute("class", "saveBtn col-2");
         buttonEl.setAttribute("data-index", i);
         buttonEl.textContent = "Save";
 
@@ -57,24 +55,28 @@ containerEl.addEventListener("click", function (event) {
         var hourNumber = element.getAttribute("data-index");
         var entryEl = element.previousSibling;
         var savedEntry = { hour: hourNumber, entry: entryEl.value };
-        console.log(entryEl.value);
         toDo = toDo.concat(savedEntry);
         localStorage.setItem("toDo", JSON.stringify(toDo.concat(savedEntry)));
     }
 });
 
 function timeColors (){
-        //.isBefore .isAfter .isSame
-        var timeTest = document.querySelector("data", "hour");
-        console.log(timeTest);
-    
-    
+        var timeTest = document.querySelectorAll('textarea');
+        for (var i = 0; i < timeTest.length; i++){
+            var scheduleHour = timeTest[i].getAttribute('data-hour');
+
+            if (scheduleHour < currentHour){
+                timeTest[i].setAttribute('class', 'past description col-8');
+            } else if (scheduleHour === currentHour) {
+                timeTest[i].setAttribute('class', 'present description col-8');
+            } else {
+                timeTest[i].setAttribute('class', 'future description col-8');
+            }
+        }   
     }
 
     function init() {
         setHours();
         timeColors();
-        console.log(currentHour);
-
     }
     init();
