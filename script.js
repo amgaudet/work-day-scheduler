@@ -1,5 +1,6 @@
 var containerEl = document.querySelector('.container');
 var currentDay = moment().format('dddd MMM Do');
+var toDo = JSON.parse(localStorage.getItem("toDo")) || [];
 $('#currentDay').text(currentDay);
 
 var schedule = {
@@ -19,7 +20,9 @@ function setHours() {
 
         var textAreaEl = document.createElement('input');
         textAreaEl.setAttribute("class", "description");
-        textAreaEl.setAttribute("type", "textarea")
+        textAreaEl.setAttribute("type", "textarea");
+        textAreaEl.setAttribute("data-index", i);
+        textAreaEl.setAttribute("data-hour", schedule.time[i]);
 
         var buttonEl = document.createElement('button');
         buttonEl.setAttribute("class", "saveBtn");
@@ -34,16 +37,31 @@ function setHours() {
     }
 }
 
-containerEl.addEventListener("submit", function(event){
+containerEl.addEventListener("click", function(event){
     event.preventDefault();
+
+    if (event.target.matches("button")){
     var element = event.target;
-    if (element.matches("button")) {
-        console.log(element);
+    var hourNumber = element.getAttribute("data-index");
+    var entryEl = document.querySelector('input', hourNumber);
+    var savedEntry = {hour: hourNumber, entry: entryEl.value};
+    console.log(entryEl.value);
+    toDo = toDo.concat(savedEntry);
+    console.log(entryEl.value);
+    localStorage.setItem("toDo", JSON.stringify(toDo.concat(savedEntry)));
     }
 });
 
+// function timeColors (){
+//     //.isBefore .isAfter .isSame
+//     var timeTest = document.querySelector("data-hour", "hour");
+//     console.log(timeTest.datastate.hour);
+    
+
+// }
+
 function init() {
     setHours();
+    timeColors();
 }
-
 init();
